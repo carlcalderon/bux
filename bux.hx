@@ -14,7 +14,7 @@ class Bux
     bux.begin();
   }
 
-  private static var REGEX_COMMAND_LINE_ARGUMENT    :EReg = ~/^-(\w)|^--(\w+)/;
+  private static var REGEX_COMMAND_LINE_ARGUMENT    :EReg = ~/^-(\w+)|^--(\w+)/;
   private static var REGEX_REGULAR_EXPRESSION_INPUT :EReg = ~/\/(.+?)\/(\w+?)?/;
   private static var REGEX_COMMAND_REPLACE          :EReg = ~/\{(\d)\}/g;
 
@@ -50,18 +50,16 @@ class Bux
       if (REGEX_COMMAND_LINE_ARGUMENT.match(arg)) {
         var flag :String = REGEX_COMMAND_LINE_ARGUMENT.matched(1);
         var long :String = REGEX_COMMAND_LINE_ARGUMENT.matched(2);
-
-        var spec_arg :String = null;
         if (flag != null) {
-          spec_arg = flag;
+          if (flag.length > 1) {
+            for (subFlag in flag.split("")) {
+              registerFlag(subFlag);
+            }
+          } else {
+            registerFlag(flag);
+          }
         } else {
-          spec_arg = long;
-        }
-        switch (spec_arg) {
-          case "v" | "version": printVersion();
-          case "h" | "help":    printHelp();
-          case "d" | "dry-run": FLAG_DRY_RUN    = true;
-          case "l" | "lines":   FLAG_LINE_INPUT = true;
+          registerFlag(long);
         }
       } else if (REGEX_REGULAR_EXPRESSION_INPUT.match(arg)) {
         var pattern :String = REGEX_REGULAR_EXPRESSION_INPUT.matched(1);
@@ -79,6 +77,15 @@ class Bux
     }
     if (userRegEx == null) {
       printHelp(1);
+    }
+  }
+
+  private function registerFlag(flag :String):Void {
+    switch (flag) {
+      case "v" | "version": printVersion();
+      case "h" | "help":    printHelp();
+      case "d" | "dry-run": FLAG_DRY_RUN    = true;
+      case "l" | "lines":   FLAG_LINE_INPUT = true;
     }
   }
 
