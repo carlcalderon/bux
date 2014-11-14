@@ -16,7 +16,7 @@ class Bux
 
   private static var REGEX_COMMAND_LINE_ARGUMENT    :EReg = ~/^-(\w+)|^--(\w+)/;
   private static var REGEX_REGULAR_EXPRESSION_INPUT :EReg = ~/\/(.+?)\/(\w+?)?/;
-  private static var REGEX_COMMAND_REPLACE          :EReg = ~/\{(\d)\}/g;
+  private static var REGEX_COMMAND_REPLACE          :EReg = ~/(?<!\\)\{(\d)(?<!\\)\}/g;
 
   private var FLAG_DRY_RUN    :Bool = false;
   private var FLAG_LINE_INPUT :Bool = false;
