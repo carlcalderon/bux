@@ -135,7 +135,11 @@ class Bux
       stdout.writeString(command + "\n");
       stdout.flush();
     } else {
-      // exec the command
+      var arguments :Array<String> = ~/(?<!\\)\s/.split(command);
+      var cmd       :String        = arguments.shift();
+      var process:Process = new Process(cmd, arguments);
+      stdout.writeString(process.stdout.readAll().toString());
+      stdout.flush();
     }
   }
 
