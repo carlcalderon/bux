@@ -57,7 +57,7 @@ class Bux
   /**
    * Forked from bux STDIN
    */
-  private var stdin  :Input;
+  private var stdin :Input;
 
   /**
    * Forked to bux STDOUT
@@ -120,7 +120,7 @@ class Bux
         commandString = REGEX_COMMAND_REPLACE.replace(arg, "$$$1");
       }
     }
-    if (userRegEx == null) {
+    if (userRegEx == null || commandString == null) {
       printHelp(1);
     }
   }
@@ -226,7 +226,7 @@ class Bux
     var information:String = [
       "bux v" + VERSION,
       "",
-      "Usage: bux <Regular Expression> [command]",
+      "Usage: bux <regular expression> <command>",
       "",
       "-v, --version\tPrint version",
       "-h, --help\tPrint help",
