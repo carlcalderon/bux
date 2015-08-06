@@ -63,6 +63,17 @@ specify a dry run.
 Keeping lists of custom arguments can be very handy. `bux` allows you to execute
 and merge the `command` for each line in STDIN individually (see *Example*).
 
+### Follow
+`-f` or `--follow`
+
+This option will keep bux running even if STDIN is empty and execute the
+regular expression test and user defined `command` for each line STDIN receives.
+This is useful if you are listening to network sockets or reading continously
+appended files such as log-files.
+
+**Note:** This will read complete lines (ending with system EOL) regardless if
+`--lines` is specified or not.
+
 ## License
 `bux` is licensed under [MIT][mit]
 

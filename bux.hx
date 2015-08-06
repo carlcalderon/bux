@@ -2,6 +2,7 @@ import Sys;
 import sys.io.Process;
 import haxe.io.Input;
 import haxe.io.Output;
+import haxe.io.Eof;
 
 /**
  * bux application / instance
@@ -29,7 +30,19 @@ class Bux
    * be executed and the argument / command merge will only be traced. This
    * allows the user to validate the command construction prior to live-run.
    */
-  private var FLAG_DRY_RUN    :Bool = false;
+  private var FLAG_DRY_RUN  :Bool = false;
+
+  /**
+   * Attached to the `--follow` flag. If `true` bux will not exit it's process
+   * once STDIN is read, but rather continue to read STDIN and trigger Regular
+   * Expression tests on every line STDIN provides. If a match is found, that
+   * line is merged with the specified user command and executed.
+   *
+   * Note: Haxe has no currently available API to read the STDIN byte length
+   * forcing this to read whole lines rather than available bytes (even if the
+   * `--lines` flag is set or not).
+   */
+  private var FLAG_FOLLOW   :Bool = false;
 
   /**
    * Attached to the `--lines` flag. If `true`, bux will merge and execute for
@@ -135,6 +148,7 @@ class Bux
       case "h" | "help":    printHelp();
       case "d" | "dry-run": FLAG_DRY_RUN    = true;
       case "l" | "lines":   FLAG_LINE_INPUT = true;
+      case "f" | "follow":  FLAG_FOLLOW     = true;
     }
   }
 
@@ -152,6 +166,21 @@ class Bux
       var lines :Array<String> = input.split("\n");
       for (line in lines) {
         exec(merge(line, regex, command));
+      }
+    }
+
+    if (FLAG_FOLLOW) {
+      while(true) {
+        try {
+          input = stdin.readLine();
+          if (input != null) {
+            exec(merge(input, regex, command));
+          }
+        } catch (message:Eof) {
+          // Ignore Eof Exception since FLAG_FOLLOW will reach EOF at the end of
+          // each readLine if it's currently the last line in STDIN.
+          // FLAG_FOLLOW will only abort upon user interaction to terminate.
+        }
       }
     }
   }
@@ -230,6 +259,7 @@ class Bux
       "",
       "-v, --version\tPrint version",
       "-h, --help\tPrint help",
+      "-f, --follow\tContinue to track STDIN continuously (always line based)",
       "-l, --lines\tExecute [command] for each line in STDIN",
       "-d, --dry-run\tOnly output command build-up result",
     ].join("\n");
