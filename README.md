@@ -5,6 +5,18 @@
 `bux` is a small terminal program that can digest text based input and execute
 other CL programs based on a regular expression ruleset.
 
+## Compiling
+`bus` is built using the `Haxe` compiler and require `hxcpp` to compile. The
+`hxcpp` library can be installed using the `haxelib` program like so:
+
+	$ haxelib install hxcpp
+
+To build `bux` you simply execute the following line in the project directory.
+This will create a `bux.cpp` folder with the C++ output and a `bin` folder where
+you will find the finished `bux` executable binary.
+
+	$ haxe build.hxml
+
 ## Usage
 `bux` takes 2 arguments; regular expression (rules) and command like so:
 
